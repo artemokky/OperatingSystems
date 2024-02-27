@@ -1,0 +1,3 @@
+/home/artemokky/OS/OperatingSystem/lab1/folder1
+/home/artemokky/OS/OperatingSystem/lab1/folder2
+60
