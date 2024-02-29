@@ -10,6 +10,10 @@
 #include <csignal>
 #include <sys/stat.h>
 #include <syslog.h>
+#include <cstdio>
+#include <cstdlib>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 const int INIT_INTERVAL = 3;
