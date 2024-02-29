@@ -100,13 +100,16 @@ void Daemon::stop_daemon(){
     if (fs::exists("/proc/" + std::to_string(pid)))
         kill(pid, SIGTERM);
     syslog(LOG_NOTICE, "Daemon terminated");
+    f.close();
 }
 
 void Daemon::make_daemon() {
     pid_t pid = fork();
-    if (pid != 0) {
+    if (pid < 0)
         exit(EXIT_FAILURE);
-    }
+
+    if (pid > 0)
+        exit(EXIT_SUCCESS);
 
     if (setsid() < 0) {
         exit(EXIT_FAILURE);
@@ -115,7 +118,6 @@ void Daemon::make_daemon() {
     std::signal(SIGHUP, signal_handler);
     std::signal(SIGTERM, signal_handler);
 
-    pid = fork();
     if (pid != 0)
         exit(EXIT_FAILURE);
 
@@ -128,6 +130,11 @@ void Daemon::make_daemon() {
     openlog("mydaemon", LOG_PID, LOG_DAEMON);
 
     std::ofstream f(pid_path, std::ios_base::trunc);
+    if (!f.is_open()){
+        syslog(LOG_ERR, "PID file do not exist/permisson denied");
+        exit(EXIT_FAILURE);
+    }
     f << getpid();
+    f.close();
 }
 
